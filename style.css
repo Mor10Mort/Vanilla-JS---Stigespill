@@ -1,0 +1,45 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+#theBoard  { 
+    flex-flow: column;
+    height: 100%;
+    position: absolute;
+}
+    
+    
+#theBoard div {
+    float: left;
+    width: 9%;
+    height: 2.5em;
+    font-size: 2em;
+    border:1px solid black;
+}
+#theBoard div .activeTile {
+    background-color: rgb(253 105 255);
+}
+#theButton  {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+#theButton button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#theBoard div#theHeroImage {
+    position: absolute;
+    
+   
+    height: 73px;
+    width: 40px;
+    background-image: url(walking.png);
+    background-size: 300px auto;
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+  }
