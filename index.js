@@ -117,19 +117,22 @@ button.addEventListener('click', event => {
         console.log(theActiveTile.left);
         let speedHorizontal = 1;
         let speedDiagonal = 1;
-        console.log("moveDudeLeft: " + moveDudeLeft,"moveDudeRight: " + moveDudeRight,"theActiveTile.left: " + theActiveTile.left,"theActiveTile.right: " + theActiveTile.right );
-
-        if ((moveDudeLeft >= theActiveTile.left) && !(moveDudeLeft <= theActiveTile.left)){
+        
+//&& (theActiveTile.left=0)
+        if ((moveDudeLeft >= theActiveTile.left) && !(moveDudeRight <= theActiveTile.left)){
           console.log("go left");
           moveDudeLeft -= speedHorizontal;
+		  console.log("1 moveDudeLeft: " + moveDudeLeft,"moveDudeRight: " + moveDudeRight,"theActiveTile.left: " + theActiveTile.left,"theActiveTile.right: " + theActiveTile.right );
      
-        } else if ((moveDudeRight <= theActiveTile.right) && !(moveDudeLeft >= theActiveTile.left)){
+        } else if ((moveDudeRight <= theActiveTile.left) && !(moveDudeLeft >= theActiveTile.left)){
           console.log("go right");
           moveDudeLeft += speedHorizontal;
+		  console.log("2 moveDudeLeft: " + moveDudeLeft,"moveDudeRight: " + moveDudeRight,"theActiveTile.left: " + theActiveTile.left,"theActiveTile.right: " + theActiveTile.right );
          
-        } else if (moveDudeRight = theActiveTile.left){
+        } else if ((moveDudeLeft = theActiveTile.left)){
           console.log("else stop");
           stopAnimate();
+		  console.log("3 moveDudeLeft: " + moveDudeLeft,"moveDudeRight: " + moveDudeRight,"theActiveTile.left: " + theActiveTile.left,"theActiveTile.right: " + theActiveTile.right );
         }
         
       
