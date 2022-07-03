@@ -44,3 +44,26 @@ body {
     border: none;
     margin: 6px 15px;
   }
+
+.up {
+    background: repeating-linear-gradient(
+        45deg,
+        #FFF,
+        #FFF 10px,
+        #63E838 10px,
+        #63E838 20px
+      );
+}
+.down {
+    background: repeating-linear-gradient(
+        45deg,
+        #FFF,
+        #FFF 10px,
+        #DB1826 10px,
+        #DB1826 20px
+      );
+}
+.ladder {
+    border: solid black;
+ 
+  }
