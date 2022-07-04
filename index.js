@@ -80,12 +80,14 @@ const boardMechanics = {
     }
 
     function makeTilesGreenOrRed(name, element1, element2, theColor) {
-    
-
+      
+      let getTheDigitsElement1 = parseInt(element1.slice(-2));
+      let getTheDigitsElement2 = parseInt(element2.slice(-2));
       //lage key/value pair for stigene
-      Object.assign(boardMechanics.allLadders, {topVerdi: parseInt(element1.slice(-2)), bottomVerdi: parseInt(element2.slice(-2))});
-
-      console.log(boardMechanics.allLadders);
+      if (boardMechanics.allLadders[getTheDigitsElement2] === undefined) {
+        boardMechanics.allLadders[getTheDigitsElement2] = [];
+    }
+      Object.assign(boardMechanics.allLadders[getTheDigitsElement2], {topVerdi: getTheDigitsElement1, bottomVerdi: getTheDigitsElement2});
 
       const d1 = document.getElementById(element1);
       const d2 = document.getElementById(element2);
@@ -129,7 +131,7 @@ const boardMechanics = {
     this.theActiveTilePositions(theActiveTile);
   },
   activeTile: function () {
-
+console.log(this.playerSteps);
     if (this.playerSteps <= 100) {
       const theTile = document.getElementById('squareNumber' + this.playerSteps);
       theTile.style.backgroundColor = "#FF6B1A";
@@ -182,7 +184,7 @@ const boardMechanics = {
         Object.assign(obj.style, styles);
 
         let theActiveTile = document.getElementById('squareNumber' + boardMechanics.rememberTheSteps[boardMechanics.rememberTheSteps.length - 1]).getBoundingClientRect();
-
+        console.log(boardMechanics.rememberTheSteps.length - 1);
         let speedHorizontal = 2;
         let speedDiagonal = .5;
 
@@ -211,15 +213,21 @@ const boardMechanics = {
           if ((boardMechanics.theGreenTilesBottom.includes(boardMechanics.playerSteps))) {
             console.log(boardMechanics.playerSteps);
 
+            //boardMechanics.allLadders[name]
             function getKeyByValue(object, value) {
-              return Object.keys(object).find(key => object[key] === value);
+              return Object.keys(object).find(value => object[value] === key);
             }
-         console.log(boardMechanics.allLadders);
-            console.log(getKeyByValue(boardMechanics.allLadders,92));
-
-            //console.log(findTheTop);
-
-
+            
+            let theLadderObject = boardMechanics.allLadders[boardMechanics.playerSteps].topVerdi;
+            let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
+            document.getElementById("theHeroImage").style.top = theTileToJumpTo.top +"px";
+            document.getElementById("theHeroImage").style.left= theTileToJumpTo.left +"px";
+            boardMechanics.rememberTheSteps.push(theLadderObject);
+            console.log(theLadderObject);
+            let addTheUpSteps = theLadderObject - boardMechanics.playerSteps;
+            boardMechanics.playerSteps += addTheUpSteps;
+            console.log(boardMechanics.rememberTheSteps);
+            console.log(boardMechanics.playerSteps);
           }
           //console.log("moveDudeLeft: " + moveDudeLeft,"moveDudeRight: " + moveDudeRight,"moveDudeTOP: " + moveDudeTop,"theActiveTile.left: " + theActiveTile.left,"theActiveTile.right: " + theActiveTile.right,"theActiveTile.top: " + theActiveTile.top );
         } else {
