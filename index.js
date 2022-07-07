@@ -7,6 +7,7 @@ const boardMechanics = {
   allLadders: [],
   theGreenTilesTop: [],
   theGreenTilesBottom: [],
+  theRedTilesTop: [],
   theGreenTilesPosX: [],
   theBoardDiv: document.getElementById('theBoard'),
   theTile: document.getElementById('squareNumber' + this.playerSteps),
@@ -42,7 +43,6 @@ const boardMechanics = {
       this.theBoardDiv.append(frameDiv);
     }
     boardMechanics.activeTile();
-    this.moveTheDude();
 
     //LAGE SLANGER OG STIGENE
     //denne kopierte jeg fra https://thewebdev.info/2021/09/12/how-to-draw-a-line-between-two-divs-with-javascript/
@@ -96,7 +96,6 @@ const boardMechanics = {
         connect(d1, d2, 'up', 10);
         d1.style.backgroundColor = "#88F7B8";
         d2.style.backgroundColor = "#88F7B8";
-        boardMechanics.theGreenTilesTop.push(parseInt(element1.slice(-2)));
         boardMechanics.theGreenTilesBottom.push(parseInt(element2.slice(-2)));
 
         
@@ -105,6 +104,7 @@ const boardMechanics = {
         connect(d1, d2, 'down', 10);
         d1.style.backgroundColor = "#88F7B8";
         d2.style.backgroundColor = "#88F7B8";
+        boardMechanics.theRedTilesTop.push(parseInt(element1.slice(-2)));
       }
     }
 
@@ -117,21 +117,60 @@ const boardMechanics = {
     makeTilesGreenOrRed('Stige 7', 'squareNumber92', 'squareNumber73', 'red');
     //SLUTT markere snakes and ladders
   },
+  countNextPlayer: 0,
+  stepThroughEachPlayer: function () {
+    console.log(this.returnTheActivePlayer().nameOfPlayer+" "+this.returnTheActivePlayerSteps());
+    if (this.firstPlayerUp == false) {
+        this.firstPlayerUp = true;
+        return this.countNextPlayer = 0;
+    }
+
+    let thePlayerCounter = boardMechanics.countNextPlayer == myPlayass.length - 1;
+    if (thePlayerCounter) {
+        this.countNextPlayer = 0;
+    } else {
+        this.countNextPlayer++;
+    }
+    return this.countNextPlayer;
+  
+  },
+  playerCounter: function (playerNR) {
+    //console.log(myPlayass[playerNR]);
+    /*
+    this.allPlayers.forEach(function (value, i) {
+        document.getElementById(deckMechanics.allPlayers[i]).classList.remove("activePlayer");
+    });
+    let thePlayersTitle = document.getElementById(deckMechanics.allPlayers[playerNR]);
+    thePlayersTitle.classList.add("activePlayer");
+    let playersCardOnHands = document.getElementById(deckMechanics.allPlayers[playerNR]).getElementsByClassName("card");
+    deckMechanics.whoGetsToClickTheCards();*/
+},
+returnTheActivePlayer: function(){
+  return myPlayass[this.countNextPlayer];
+},
+returnTheActivePlayerSteps: function(){
+  return myPlayass[this.countNextPlayer].playerSteps;
+},
   rollTheDize: function (event) {
-    boardMechanics.playerSteps += boardMechanics.randoNumber(1, 6);
-    //  console.log(boardMechanics.playerSteps);
+    console.log(Object.keys(this.returnTheActivePlayer().playerHistorySteps).length === 0);
+   if (Object.keys(this.returnTheActivePlayer().playerHistorySteps).length === 0){
+    this.returnTheActivePlayer().playerHistorySteps.push(1);
+   }
+    console.log(this.returnTheActivePlayer().playerHistorySteps);
+    if (!(this.returnTheActivePlayer().playerHistorySteps)){
+      console.log("bja");
+    }
+    let rolleTheRandomDize = boardMechanics.randoNumber(1, 6);
+    this.returnTheActivePlayer().playerHistorySteps.push(rolleTheRandomDize);
+    this.returnTheActivePlayer().playerSteps += rolleTheRandomDize;
+    console.log(this.returnTheActivePlayer().nameOfPlayer + ' ' + this.returnTheActivePlayer().playerHistorySteps);
+
+    boardMechanics.playerSteps += rolleTheRandomDize;
     boardMechanics.activeTile();
     this.playerMechanics();
   },
-  moveTheDude: function () {
-    let heroDiv = document.createElement('div');
-    heroDiv.id = "theHeroImage";
-    let theActiveTile = document.getElementById('squareNumber1');
-    theActiveTile.append(heroDiv);
-    this.theActiveTilePositions(theActiveTile);
-  },
+  
   activeTile: function () {
-console.log(this.playerSteps);
     if (this.playerSteps <= 100) {
       const theTile = document.getElementById('squareNumber' + this.playerSteps);
       theTile.style.backgroundColor = "#FF6B1A";
@@ -149,6 +188,38 @@ console.log(this.playerSteps);
       document.getElementById('squareNumber100').style.backgroundColor = "#FF6B1A";
     }
   },
+  checkLadder: function(){
+      let theActiveNumber = this.returnTheActivePlayer().playerSteps;
+      console.log(boardMechanics.theGreenTilesBottom, theActiveNumber);
+
+    if ((boardMechanics.theGreenTilesBottom.includes(theActiveNumber))) {
+      console.log("sinos");
+      function getKeyByValue(object, value) {
+        return Object.keys(object).find(value => object[value] === key);
+      }
+      
+      let theLadderObject = boardMechanics.allLadders[boardMechanics.playerSteps].topVerdi;
+      let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
+      document.getElementById("emory").style.top = theTileToJumpTo.top +"px";
+      document.getElementById("emory").style.left= theTileToJumpTo.left +"px";
+      boardMechanics.rememberTheSteps.push(theLadderObject);
+      let addTheUpSteps = theLadderObject - boardMechanics.playerSteps;
+      boardMechanics.playerSteps += addTheUpSteps;
+    } else if ((boardMechanics.theRedTilesTop.includes(theActiveNumber))) {
+      console.log("bingo");
+      function getKeyByValue(object, value) {
+        return Object.keys(object).find(value => object[value] === key);
+      }
+      
+      let theLadderObject = boardMechanics.allLadders[boardMechanics.allPlayers[boardMechanics.countNextPlayer]].bottomVerdi;
+      let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
+      document.getElementById("emory").style.top = theTileToJumpTo.top +"px";
+      document.getElementById("emory").style.left= theTileToJumpTo.left +"px";
+      boardMechanics.rememberTheSteps.push(theLadderObject);
+      let addTheUpSteps = theLadderObject - boardMechanics.allPlayers[boardMechanics.countNextPlayer];
+      boardMechanics.allPlayers[boardMechanics.countNextPlayer] += addTheUpSteps;
+    }
+  },
   playerMechanics: function () {
     let theRepeater; //we will use this variable to clear the setInterval()
 
@@ -159,20 +230,22 @@ console.log(this.playerSteps);
     animateScript();
 
     function animateScript() {
-
-      let theLastTile = document.getElementById('squareNumber' + boardMechanics.rememberTheSteps[boardMechanics.rememberTheSteps.length - 2]).getBoundingClientRect();
-
+      
+      let catchTheTileWeBEENAt = 'squareNumber' + boardMechanics.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 2];
+      let theActiveTileOfThePlayer = document.getElementById(catchTheTileWeBEENAt).getBoundingClientRect();
+      console.log('catchTheTileWeBEENAt: ' + catchTheTileWeBEENAt + 'playerssteps: '+ boardMechanics.returnTheActivePlayer().playerSteps);
+      
       const interval = 0; //100 ms of interval for the setInterval()
 
       //coordinates for the dude moving around
-      let moveDudeLeft = theLastTile.left;
-      let moveDudeTop = theLastTile.top;
-      let moveDudeRight = theLastTile.right;
-      let moveDudeBottom = theLastTile.bottom;
+      let moveDudeLeft = theActiveTileOfThePlayer.left;
+      let moveDudeTop = theActiveTileOfThePlayer.top;
+      let moveDudeRight = theActiveTileOfThePlayer.right;
+      let moveDudeBottom = theActiveTileOfThePlayer.bottom;
 
       theRepeater = setInterval(() => {
         var styles = {
-          "backgroundPosition": `${theLastTile.top}px ${theLastTile.right} px`,
+          "backgroundPosition": `${theActiveTileOfThePlayer.top}px ${theActiveTileOfThePlayer.right} px`,
           "-webkit-transform": "scaleX(-1)",
           "transform": "scaleX(-1)",
           "left": `${moveDudeLeft}px`,
@@ -180,59 +253,42 @@ console.log(this.playerSteps);
           "right": `${moveDudeRight}px`,
           "bottom": `${moveDudeBottom}px`
         };
-        var obj = document.getElementById("theHeroImage");
+        var obj = document.getElementById(boardMechanics.returnTheActivePlayer().nameOfPlayer);
         Object.assign(obj.style, styles);
+        console.log(boardMechanics.returnTheActivePlayer().nameOfPlayer);
+        let catchTheTileGOINGTo = 'squareNumber' + boardMechanics.returnTheActivePlayer().playerSteps;
+        let theActiveTile = document.getElementById(catchTheTileGOINGTo).getBoundingClientRect();
+        //let theActiveTile = document.getElementById('squareNumber' + boardMechanics.rememberTheSteps[boardMechanics.rememberTheSteps.length - 1]).getBoundingClientRect();
 
-        let theActiveTile = document.getElementById('squareNumber' + boardMechanics.rememberTheSteps[boardMechanics.rememberTheSteps.length - 1]).getBoundingClientRect();
-        console.log(boardMechanics.rememberTheSteps.length - 1);
+        console.log("catchTheTileGOINGTo: " + catchTheTileGOINGTo);
+
         let speedHorizontal = 2;
         let speedDiagonal = .5;
 
-        //console.log((moveDudeLeft > theActiveTile.left) && !(moveDudeRight < theActiveTile.right));
-        //console.log(moveDudeTop > theActiveTile.top);
-        //console.log((moveDudeLeft < theActiveTile.left) && !(moveDudeRight > theActiveTile.right));
-
         if ((moveDudeLeft > theActiveTile.left) && !(moveDudeRight < theActiveTile.right)) {
-          //console.log("go left");
           moveDudeLeft -= speedHorizontal;
-          //console.log("moveDudeLeft: " + moveDudeLeft,"moveDudeRight: " + moveDudeRight,"moveDudeTOP: " + moveDudeTop,"theActiveTile.left: " + theActiveTile.left,"theActiveTile.right: " + theActiveTile.right,"theActiveTile.top: " + theActiveTile.top );
-
         } else if (moveDudeTop > theActiveTile.top) {
-          //console.log("UP!");
           moveDudeLeft += speedHorizontal;
           moveDudeTop -= speedDiagonal;
         } else if ((moveDudeLeft < theActiveTile.left) && !(moveDudeRight > theActiveTile.right)) {
-          //console.log("go right");
           moveDudeLeft += speedHorizontal;
-          //console.log("moveDudeLeft: " + moveDudeLeft,"moveDudeRight: " + moveDudeRight,"moveDudeTOP: " + moveDudeTop,"theActiveTile.left: " + theActiveTile.left,"theActiveTile.right: " + theActiveTile.right,"theActiveTile.top: " + theActiveTile.top );
-
         }
         else if ((moveDudeLeft = theActiveTile.left)) {
-          //console.log("else stop");
           stopAnimate();
-          if ((boardMechanics.theGreenTilesBottom.includes(boardMechanics.playerSteps))) {
-            console.log(boardMechanics.playerSteps);
+          boardMechanics.checkLadder();
+          boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());
 
-            //boardMechanics.allLadders[name]
-            function getKeyByValue(object, value) {
-              return Object.keys(object).find(value => object[value] === key);
-            }
-            
-            let theLadderObject = boardMechanics.allLadders[boardMechanics.playerSteps].topVerdi;
-            let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
-            document.getElementById("theHeroImage").style.top = theTileToJumpTo.top +"px";
-            document.getElementById("theHeroImage").style.left= theTileToJumpTo.left +"px";
-            boardMechanics.rememberTheSteps.push(theLadderObject);
-            console.log(theLadderObject);
-            let addTheUpSteps = theLadderObject - boardMechanics.playerSteps;
-            boardMechanics.playerSteps += addTheUpSteps;
-            console.log(boardMechanics.rememberTheSteps);
-            console.log(boardMechanics.playerSteps);
+          if (boardMechanics.playerSteps >= 100) {
+            alert("DU VANT!!");
+            console.log("you won!");
+            this.cleanTheLastTile(1);
+            document.getElementById('squareNumber100').style.backgroundColor = "#FF6B1A";
           }
-          //console.log("moveDudeLeft: " + moveDudeLeft,"moveDudeRight: " + moveDudeRight,"moveDudeTOP: " + moveDudeTop,"theActiveTile.left: " + theActiveTile.left,"theActiveTile.right: " + theActiveTile.right,"theActiveTile.top: " + theActiveTile.top );
         } else {
           stopAnimate();
-          //console.log(" stop turd");
+          console.log(" stop turd");
+          boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());
+
         }
       }, interval); //end of setInterval
     } //end of animateScript()
@@ -241,10 +297,32 @@ console.log(this.playerSteps);
 
 boardMechanics.createTheBoard();
 
+const createThePlayer = function (nameOfPlayer) {
+  this.nameOfPlayer = nameOfPlayer;
+  this.playerSteps = 1;
+  this.playerHistorySteps = [];
+  this.addPlayer = function () {
+    let playerDiv = document.createElement('div');
+    playerDiv.id = this.nameOfPlayer;
+    playerDiv.className = "theHeroImage";
+    let theActiveTile = document.getElementById('squareNumber1');
+    theActiveTile.append(playerDiv);
+    //playerDiv.theActiveTilePositions(theActiveTile);
+  };
+};
+
+
+//Create the new players
+const emory = new createThePlayer('emory');
+const finley = new createThePlayer('finley');
+emory.addPlayer();
+finley.addPlayer();
+
+const myPlayass = [emory, finley];
+
+boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());
+
 const button = document.querySelector('button');
 button.addEventListener('click', event => {
   boardMechanics.rollTheDize();
 });
-
-
-
