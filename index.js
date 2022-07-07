@@ -119,7 +119,6 @@ const boardMechanics = {
   },
   countNextPlayer: 0,
   stepThroughEachPlayer: function () {
-    console.log(this.returnTheActivePlayer().nameOfPlayer+" "+this.returnTheActivePlayerSteps());
     if (this.firstPlayerUp == false) {
         this.firstPlayerUp = true;
         return this.countNextPlayer = 0;
@@ -156,15 +155,15 @@ returnTheActivePlayerSteps: function(){
    if (Object.keys(this.returnTheActivePlayer().playerHistorySteps).length === 0){
     this.returnTheActivePlayer().playerHistorySteps.push(1);
    }
-    console.log(this.returnTheActivePlayer().playerHistorySteps);
-    if (!(this.returnTheActivePlayer().playerHistorySteps)){
-      console.log("bja");
-    }
+   
     let rolleTheRandomDize = boardMechanics.randoNumber(1, 6);
-    this.returnTheActivePlayer().playerHistorySteps.push(rolleTheRandomDize);
+    let lastNumberInHistory = this.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 1];
+    let summarizeWithLastNumber = lastNumberInHistory + rolleTheRandomDize;
+    this.returnTheActivePlayer().playerHistorySteps.push(summarizeWithLastNumber);
     this.returnTheActivePlayer().playerSteps += rolleTheRandomDize;
+    console.log(this.returnTheActivePlayer().playerSteps);
     console.log(this.returnTheActivePlayer().nameOfPlayer + ' ' + this.returnTheActivePlayer().playerHistorySteps);
-
+    console.log(lastNumberInHistory);
     boardMechanics.playerSteps += rolleTheRandomDize;
     boardMechanics.activeTile();
     this.playerMechanics();
@@ -193,28 +192,25 @@ returnTheActivePlayerSteps: function(){
       console.log(boardMechanics.theGreenTilesBottom, theActiveNumber);
 
     if ((boardMechanics.theGreenTilesBottom.includes(theActiveNumber))) {
-      console.log("sinos");
-      function getKeyByValue(object, value) {
-        return Object.keys(object).find(value => object[value] === key);
-      }
-      
-      let theLadderObject = boardMechanics.allLadders[boardMechanics.playerSteps].topVerdi;
+      console.log("Hit a green ladder");
+      console.log(this.returnTheActivePlayer().playerSteps);
+      let theLadderObject = boardMechanics.allLadders[this.returnTheActivePlayer().playerSteps].topVerdi;
       let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
-      document.getElementById("emory").style.top = theTileToJumpTo.top +"px";
-      document.getElementById("emory").style.left= theTileToJumpTo.left +"px";
-      boardMechanics.rememberTheSteps.push(theLadderObject);
-      let addTheUpSteps = theLadderObject - boardMechanics.playerSteps;
-      boardMechanics.playerSteps += addTheUpSteps;
+      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.top = theTileToJumpTo.top +"px";
+      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.left= theTileToJumpTo.left +"px";
+      console.log(theLadderObject);
+      this.returnTheActivePlayer().playerHistorySteps.push(theLadderObject);
+      this.returnTheActivePlayer().playerSteps += theLadderObject;
+      let lastNumberInHistory = this.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 2];
+      console.log(lastNumberInHistory);
+      let addTheUpSteps = theLadderObject - this.returnTheActivePlayer().playerSteps;
+      this.returnTheActivePlayer().playerSteps += addTheUpSteps;
     } else if ((boardMechanics.theRedTilesTop.includes(theActiveNumber))) {
-      console.log("bingo");
-      function getKeyByValue(object, value) {
-        return Object.keys(object).find(value => object[value] === key);
-      }
-      
+      console.log("Hit a red ladder");
       let theLadderObject = boardMechanics.allLadders[boardMechanics.allPlayers[boardMechanics.countNextPlayer]].bottomVerdi;
       let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
-      document.getElementById("emory").style.top = theTileToJumpTo.top +"px";
-      document.getElementById("emory").style.left= theTileToJumpTo.left +"px";
+      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.top = theTileToJumpTo.top +"px";
+      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.left= theTileToJumpTo.left +"px";
       boardMechanics.rememberTheSteps.push(theLadderObject);
       let addTheUpSteps = theLadderObject - boardMechanics.allPlayers[boardMechanics.countNextPlayer];
       boardMechanics.allPlayers[boardMechanics.countNextPlayer] += addTheUpSteps;
@@ -255,15 +251,15 @@ returnTheActivePlayerSteps: function(){
         };
         var obj = document.getElementById(boardMechanics.returnTheActivePlayer().nameOfPlayer);
         Object.assign(obj.style, styles);
-        console.log(boardMechanics.returnTheActivePlayer().nameOfPlayer);
+        //console.log(boardMechanics.returnTheActivePlayer().nameOfPlayer);
         let catchTheTileGOINGTo = 'squareNumber' + boardMechanics.returnTheActivePlayer().playerSteps;
         let theActiveTile = document.getElementById(catchTheTileGOINGTo).getBoundingClientRect();
         //let theActiveTile = document.getElementById('squareNumber' + boardMechanics.rememberTheSteps[boardMechanics.rememberTheSteps.length - 1]).getBoundingClientRect();
 
-        console.log("catchTheTileGOINGTo: " + catchTheTileGOINGTo);
+        //console.log("catchTheTileGOINGTo: " + catchTheTileGOINGTo);
 
         let speedHorizontal = 2;
-        let speedDiagonal = .5;
+        let speedDiagonal = 5;
 
         if ((moveDudeLeft > theActiveTile.left) && !(moveDudeRight < theActiveTile.right)) {
           moveDudeLeft -= speedHorizontal;
