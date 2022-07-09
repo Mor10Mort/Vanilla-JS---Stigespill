@@ -23,7 +23,9 @@ const boardMechanics = {
     };
   },
   cleanTheLastTile: function (amount) {
-    let theLastTile = this.rememberTheSteps[this.rememberTheSteps.length - amount];
+    let theLastTileOfPlayer = this.returnTheActivePlayer().playerHistorySteps;
+    let theLastTile = theLastTileOfPlayer[theLastTileOfPlayer.length - amount];
+    console.log(theLastTileOfPlayer, theLastTile);
     document.getElementById('squareNumber' + theLastTile).style.backgroundColor = this.colors[this.randomColor()];
   },
   colors: ["#FADED5", "#DEBFBD", "#F5DDE2", "#DEBDD4", "#F6D5FA"],
@@ -31,8 +33,8 @@ const boardMechanics = {
     return Math.floor(Math.random() * this.colors.length)
   },
   randoNumber: function (min, max) {
-    return 6;
-    //return min + Math.floor(Math.random() * (max - min + 1));
+    //return 5;
+    return min + Math.floor(Math.random() * (max - min + 1));
   },
   createTheBoard: function () {
     for (let i = this.tiles; i >= 0 + 1; i--) {
@@ -42,7 +44,6 @@ const boardMechanics = {
       frameDiv.style.backgroundColor = this.colors[this.randomColor()];
       this.theBoardDiv.append(frameDiv);
     }
-    boardMechanics.activeTile();
 
     //LAGE SLANGER OG STIGENE
     //denne kopierte jeg fra https://thewebdev.info/2021/09/12/how-to-draw-a-line-between-two-divs-with-javascript/
@@ -84,11 +85,18 @@ const boardMechanics = {
       let getTheDigitsElement1 = parseInt(element1.slice(-2));
       let getTheDigitsElement2 = parseInt(element2.slice(-2));
       //lage key/value pair for stigene
-      if (boardMechanics.allLadders[getTheDigitsElement2] === undefined) {
-        boardMechanics.allLadders[getTheDigitsElement2] = [];
-    }
-      Object.assign(boardMechanics.allLadders[getTheDigitsElement2], {topVerdi: getTheDigitsElement1, bottomVerdi: getTheDigitsElement2});
-
+      if (theColor == "green"){
+        if (boardMechanics.allLadders[getTheDigitsElement2] === undefined) {
+          boardMechanics.allLadders[getTheDigitsElement2] = [];
+      } 
+        
+        Object.assign(boardMechanics.allLadders[getTheDigitsElement2], {topVerdi: getTheDigitsElement1, bottomVerdi: getTheDigitsElement2});
+      } else if (theColor == "red"){
+        if (boardMechanics.allLadders[getTheDigitsElement1] === undefined) {
+          boardMechanics.allLadders[getTheDigitsElement1] = [];
+        }
+        Object.assign(boardMechanics.allLadders[getTheDigitsElement1], {topVerdi: getTheDigitsElement1, bottomVerdi: getTheDigitsElement2});
+      }
       const d1 = document.getElementById(element1);
       const d2 = document.getElementById(element2);
 
@@ -97,9 +105,7 @@ const boardMechanics = {
         d1.style.backgroundColor = "#88F7B8";
         d2.style.backgroundColor = "#88F7B8";
         boardMechanics.theGreenTilesBottom.push(parseInt(element2.slice(-2)));
-
         
-
       } else if (theColor == 'red') {
         connect(d1, d2, 'down', 10);
         d1.style.backgroundColor = "#88F7B8";
@@ -112,7 +118,7 @@ const boardMechanics = {
     makeTilesGreenOrRed('Stige 2', 'squareNumber53', 'squareNumber31', 'green');
     makeTilesGreenOrRed('Stige 3','squareNumber46', 'squareNumber13', 'green');
     makeTilesGreenOrRed('Stige 4','squareNumber97', 'squareNumber56', 'green');
-    makeTilesGreenOrRed('Stige 5','squareNumber36', 'squareNumber19', 'red');
+    makeTilesGreenOrRed('Stige 5','squareNumber52', 'squareNumber19', 'red');
     makeTilesGreenOrRed('Stige 6', 'squareNumber89', 'squareNumber57', 'red');
     makeTilesGreenOrRed('Stige 7', 'squareNumber92', 'squareNumber73', 'red');
     //SLUTT markere snakes and ladders
@@ -151,7 +157,8 @@ returnTheActivePlayerSteps: function(){
   return myPlayass[this.countNextPlayer].playerSteps;
 },
   rollTheDize: function (event) {
-    console.log(Object.keys(this.returnTheActivePlayer().playerHistorySteps).length === 0);
+    document.getElementById("theButton").disabled = true;
+
    if (Object.keys(this.returnTheActivePlayer().playerHistorySteps).length === 0){
     this.returnTheActivePlayer().playerHistorySteps.push(1);
    }
@@ -165,35 +172,27 @@ returnTheActivePlayerSteps: function(){
     console.log(this.returnTheActivePlayer().nameOfPlayer + ' ' + this.returnTheActivePlayer().playerHistorySteps);
     console.log(lastNumberInHistory);
     boardMechanics.playerSteps += rolleTheRandomDize;
-    boardMechanics.activeTile();
-    this.playerMechanics();
-  },
-  
-  activeTile: function () {
-    if (this.playerSteps <= 100) {
-      const theTile = document.getElementById('squareNumber' + this.playerSteps);
-      theTile.style.backgroundColor = "#FF6B1A";
-      this.rememberTheSteps.push(this.playerSteps);
-      //SJekk her hvor pos til theTile er
-      this.theActiveTilePositions(theTile);
+
+    const theTile = document.getElementById('squareNumber' + this.returnTheActivePlayer().playerSteps);
+    console.log(this.returnTheActivePlayer(),theTile);
+    theTile.style.backgroundColor = "#FF6B1A";
       if (this.playerSteps > 1) {
         this.cleanTheLastTile(2);
       }
-    } else if (this.playerSteps = 30) {
-      console.log("you won!");
-      this.cleanTheLastTile(1);
+    this.playerMechanics();
+  },
+  
+  checkIfWon: function () {
+    if (this.playerSteps <= 100) {
 
-      //så tror du må løfte ut fjerne siste tile til funksjon
-      document.getElementById('squareNumber100').style.backgroundColor = "#FF6B1A";
-    }
+    } 
   },
   checkLadder: function(){
       let theActiveNumber = this.returnTheActivePlayer().playerSteps;
       console.log(boardMechanics.theGreenTilesBottom, theActiveNumber);
-
+     
     if ((boardMechanics.theGreenTilesBottom.includes(theActiveNumber))) {
       console.log("Hit a green ladder");
-      console.log(this.returnTheActivePlayer().playerSteps);
       let theLadderObject = boardMechanics.allLadders[this.returnTheActivePlayer().playerSteps].topVerdi;
       let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
       document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.top = theTileToJumpTo.top +"px";
@@ -207,13 +206,17 @@ returnTheActivePlayerSteps: function(){
       this.returnTheActivePlayer().playerSteps += addTheUpSteps;
     } else if ((boardMechanics.theRedTilesTop.includes(theActiveNumber))) {
       console.log("Hit a red ladder");
-      let theLadderObject = boardMechanics.allLadders[boardMechanics.allPlayers[boardMechanics.countNextPlayer]].bottomVerdi;
+      let theLadderObject = boardMechanics.allLadders[this.returnTheActivePlayer().playerSteps].bottomVerdi;
       let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
       document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.top = theTileToJumpTo.top +"px";
       document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.left= theTileToJumpTo.left +"px";
-      boardMechanics.rememberTheSteps.push(theLadderObject);
-      let addTheUpSteps = theLadderObject - boardMechanics.allPlayers[boardMechanics.countNextPlayer];
-      boardMechanics.allPlayers[boardMechanics.countNextPlayer] += addTheUpSteps;
+      console.log(theLadderObject);
+      this.returnTheActivePlayer().playerHistorySteps.push(theLadderObject);
+      this.returnTheActivePlayer().playerSteps += theLadderObject;
+      let lastNumberInHistory = this.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 2];
+      console.log(lastNumberInHistory);
+      let addTheUpSteps = theLadderObject - this.returnTheActivePlayer().playerSteps;
+      this.returnTheActivePlayer().playerSteps += addTheUpSteps;
     }
   },
   playerMechanics: function () {
@@ -259,7 +262,7 @@ returnTheActivePlayerSteps: function(){
         //console.log("catchTheTileGOINGTo: " + catchTheTileGOINGTo);
 
         let speedHorizontal = 2;
-        let speedDiagonal = 5;
+        let speedDiagonal = 1;
 
         if ((moveDudeLeft > theActiveTile.left) && !(moveDudeRight < theActiveTile.right)) {
           moveDudeLeft -= speedHorizontal;
@@ -270,21 +273,17 @@ returnTheActivePlayerSteps: function(){
           moveDudeLeft += speedHorizontal;
         }
         else if ((moveDudeLeft = theActiveTile.left)) {
+          document.getElementById("theButton").disabled = false;
           stopAnimate();
           boardMechanics.checkLadder();
           boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());
-
-          if (boardMechanics.playerSteps >= 100) {
-            alert("DU VANT!!");
-            console.log("you won!");
-            this.cleanTheLastTile(1);
-            document.getElementById('squareNumber100').style.backgroundColor = "#FF6B1A";
-          }
+          boardMechanics.checkIfWon();
         } else {
+          document.getElementById("theButton").disabled = false;
           stopAnimate();
           console.log(" stop turd");
           boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());
-
+          boardMechanics.checkIfWon();
         }
       }, interval); //end of setInterval
     } //end of animateScript()
@@ -315,10 +314,12 @@ emory.addPlayer();
 finley.addPlayer();
 
 const myPlayass = [emory, finley];
-
+//console.log(emory.playerSteps);
 boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());
 
 const button = document.querySelector('button');
+
+
 button.addEventListener('click', event => {
   boardMechanics.rollTheDize();
 });
