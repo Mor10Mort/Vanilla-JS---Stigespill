@@ -80,7 +80,7 @@ const boardMechanics = {
       document.body.innerHTML += htmlLine;
     }
 
-    function makeTilesGreenOrRed(name, element1, element2, theColor) {
+    function makeTilesGreenOrRed(element1, element2, theColor) {
       
       let getTheDigitsElement1 = parseInt(element1.slice(-2));
       let getTheDigitsElement2 = parseInt(element2.slice(-2));
@@ -97,30 +97,34 @@ const boardMechanics = {
         }
         Object.assign(boardMechanics.allLadders[getTheDigitsElement1], {topVerdi: getTheDigitsElement1, bottomVerdi: getTheDigitsElement2});
       }
-      const d1 = document.getElementById(element1);
-      const d2 = document.getElementById(element2);
+      let d1 = document.getElementById(element1);
+      let d2 = document.getElementById(element2);
 
       if (theColor == 'green') {
-        connect(d1, d2, 'up', 10);
+        connect(d1, d2, 'up', 5);
         d1.style.backgroundColor = "#88F7B8";
         d2.style.backgroundColor = "#88F7B8";
         boardMechanics.theGreenTilesBottom.push(parseInt(element2.slice(-2)));
+        document.getElementById(element2).style.backgroundColor = '#43F785';
         
       } else if (theColor == 'red') {
-        connect(d1, d2, 'down', 10);
+        connect(d1, d2, 'down', 5);
         d1.style.backgroundColor = "#88F7B8";
         d2.style.backgroundColor = "#88F7B8";
         boardMechanics.theRedTilesTop.push(parseInt(element1.slice(-2)));
+        document.getElementById(element1).style.backgroundColor = '#FA0801';
       }
     }
 
-    makeTilesGreenOrRed('Stige 1', 'squareNumber96', 'squareNumber12', 'red');
-    makeTilesGreenOrRed('Stige 2', 'squareNumber53', 'squareNumber31', 'green');
-    makeTilesGreenOrRed('Stige 3','squareNumber46', 'squareNumber13', 'green');
-    makeTilesGreenOrRed('Stige 4','squareNumber97', 'squareNumber56', 'green');
-    makeTilesGreenOrRed('Stige 5','squareNumber52', 'squareNumber19', 'red');
-    makeTilesGreenOrRed('Stige 6', 'squareNumber89', 'squareNumber57', 'red');
-    makeTilesGreenOrRed('Stige 7', 'squareNumber92', 'squareNumber73', 'red');
+    makeTilesGreenOrRed('squareNumber85', 'squareNumber12', 'red');
+    makeTilesGreenOrRed('squareNumber91', 'squareNumber31', 'green');
+    makeTilesGreenOrRed('squareNumber62', 'squareNumber35', 'green');
+    makeTilesGreenOrRed('squareNumber78', 'squareNumber16', 'green');
+    makeTilesGreenOrRed('squareNumber78', 'squareNumber16', 'green');
+    makeTilesGreenOrRed('squareNumber97', 'squareNumber66', 'green');
+    makeTilesGreenOrRed('squareNumber38', 'squareNumber19', 'red');
+    makeTilesGreenOrRed('squareNumber99', 'squareNumber30', 'red');
+    makeTilesGreenOrRed('squareNumber92', 'squareNumber73', 'red');
     //SLUTT markere snakes and ladders
   },
   countNextPlayer: 0,
@@ -164,6 +168,8 @@ returnTheActivePlayerSteps: function(){
    }
    
     let rolleTheRandomDize = boardMechanics.randoNumber(1, 6);
+    let showTheValueDize = document.getElementById("theDize");
+    showTheValueDize.innerHTML = rolleTheRandomDize;
     let lastNumberInHistory = this.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 1];
     let summarizeWithLastNumber = lastNumberInHistory + rolleTheRandomDize;
     this.returnTheActivePlayer().playerHistorySteps.push(summarizeWithLastNumber);
@@ -300,6 +306,7 @@ const createThePlayer = function (nameOfPlayer) {
     let playerDiv = document.createElement('div');
     playerDiv.id = this.nameOfPlayer;
     playerDiv.className = "theHeroImage";
+    //playerDiv.style.backgroundImage = "url('player1.png')";
     let theActiveTile = document.getElementById('squareNumber1');
     theActiveTile.append(playerDiv);
     //playerDiv.theActiveTilePositions(theActiveTile);
