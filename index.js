@@ -2,7 +2,12 @@
 
 const boardMechanics = {
   tiles: 100,
+  greenTile: '#43F785',
+  orangeTile: 'rgb(255 105 0)',
+  redTile:'#FA0801',
   playerSteps: 1,
+  cleanTiles: [],
+  allPlayers: [],
   rememberTheSteps: [],
   allLadders: [],
   theGreenTilesTop: [],
@@ -22,18 +27,12 @@ const boardMechanics = {
       'center': rect.center
     };
   },
-  cleanTheLastTile: function (amount) {
-    let theLastTileOfPlayer = this.returnTheActivePlayer().playerHistorySteps;
-    let theLastTile = theLastTileOfPlayer[theLastTileOfPlayer.length - amount];
-    console.log(theLastTileOfPlayer, theLastTile);
-    document.getElementById('squareNumber' + theLastTile).style.backgroundColor = this.colors[this.randomColor()];
-  },
   colors: ["#FADED5", "#DEBFBD", "#F5DDE2", "#DEBDD4", "#F6D5FA"],
   randomColor: function () {
     return Math.floor(Math.random() * this.colors.length)
   },
   randoNumber: function (min, max) {
-    //return 5;
+    //return 6;
     return min + Math.floor(Math.random() * (max - min + 1));
   },
   createTheBoard: function () {
@@ -102,26 +101,29 @@ const boardMechanics = {
 
       if (theColor == 'green') {
         connect(d1, d2, 'up', 5);
-        d1.style.backgroundColor = "#88F7B8";
-        d2.style.backgroundColor = "#88F7B8";
+        d1.style.backgroundColor = boardMechanics.greenTile;
+        d2.style.backgroundColor = boardMechanics.greenTile;
         boardMechanics.theGreenTilesBottom.push(parseInt(element2.slice(-2)));
-        document.getElementById(element2).style.backgroundColor = '#43F785';
+        boardMechanics.theGreenTilesTop.push(parseInt(element1.slice(-2)));
+        document.getElementById(element2).style.backgroundColor = boardMechanics.greenTile;
         
       } else if (theColor == 'red') {
         connect(d1, d2, 'down', 5);
-        d1.style.backgroundColor = "#88F7B8";
-        d2.style.backgroundColor = "#88F7B8";
+        d1.style.backgroundColor = boardMechanics.redTile;
+        d2.style.backgroundColor = boardMechanics.redTile;
         boardMechanics.theRedTilesTop.push(parseInt(element1.slice(-2)));
-        document.getElementById(element1).style.backgroundColor = '#FA0801';
+        document.getElementById(element1).style.backgroundColor = boardMechanics.redTile;
       }
     }
 
-    makeTilesGreenOrRed('squareNumber85', 'squareNumber12', 'red');
+    makeTilesGreenOrRed('squareNumber59', 'squareNumber39', 'green');
     makeTilesGreenOrRed('squareNumber91', 'squareNumber31', 'green');
     makeTilesGreenOrRed('squareNumber62', 'squareNumber35', 'green');
-    makeTilesGreenOrRed('squareNumber78', 'squareNumber16', 'green');
-    makeTilesGreenOrRed('squareNumber78', 'squareNumber16', 'green');
+    makeTilesGreenOrRed('squareNumber96', 'squareNumber13', 'green');
+    makeTilesGreenOrRed('squareNumber78', 'squareNumber17', 'green');
     makeTilesGreenOrRed('squareNumber97', 'squareNumber66', 'green');
+    makeTilesGreenOrRed('squareNumber57', 'squareNumber26', 'red');
+    makeTilesGreenOrRed('squareNumber74', 'squareNumber12', 'red');
     makeTilesGreenOrRed('squareNumber38', 'squareNumber19', 'red');
     makeTilesGreenOrRed('squareNumber99', 'squareNumber30', 'red');
     makeTilesGreenOrRed('squareNumber92', 'squareNumber73', 'red');
@@ -160,54 +162,109 @@ returnTheActivePlayer: function(){
 returnTheActivePlayerSteps: function(){
   return myPlayass[this.countNextPlayer].playerSteps;
 },
+cleanTheLastTile: function (theLastDizeNumber) {
+//Denne funksjonalitet setter jeg på pause. Sliter med finne god rytme på når fjerne, sette på farger. Blir rotete når ønsker stigene skal beholde sin farge.
+ 
+  //this.cleanTiles.indexOf(theLastDizeNumber) === -1 ?  this.cleanTiles.push(theLastDizeNumber) : this.cleanTiles.shift;
+  this.cleanTiles.push(theLastDizeNumber);
+
+  console.log(this.cleanTiles);
+
+ 
+
+ this.cleanTiles.forEach(function (item, index) {
+  console.log(item);
+  let greenTileTop = boardMechanics.theGreenTilesTop.includes(item);
+  let greenTileBottom = boardMechanics.theGreenTilesBottom.includes(item);
+console.log(greenTileBottom);
+    if  (greenTileBottom){
+    console.log("green time");
+    document.getElementById('squareNumber' + item).style.backgroundColor = boardMechanics.greenTile;
+    } else if  ((boardMechanics.cleanTiles.includes(item)) && (!(greenTileTop))){
+      console.log("orange time");
+      document.getElementById('squareNumber' + item).style.backgroundColor = boardMechanics.orangeTile;
+    } else  if ((boardMechanics.cleanTiles.length>boardMechanics.allPlayers.length) && (!(greenTileBottom))){
+      console.log("rando color time");
+      document.getElementById('squareNumber' + boardMechanics.cleanTiles[0]).style.backgroundColor = boardMechanics.colors[boardMechanics.randomColor()];
+     
+    } else if (boardMechanics.cleanTiles.length>boardMechanics.allPlayers.length){
+      console.log("CLEAMUp time");
+    let removedTile = boardMechanics.cleanTiles.shift();
+    console.log(removedTile);
+  }
+});
+
+
+  
+},
+currentClass:'',
+theValueOfTheDize:1,
   rollTheDize: function (event) {
     document.getElementById("theButton").disabled = true;
 
+    //the dize. Lånte denne fra: https://codepen.io/noirvortex/pen/MWjyeQg
+    let cube = document.querySelector('.cube');
+    let rollBtn = document.querySelector('.rollBtn');
+
+     let randNum = boardMechanics.randoNumber(1, 6);
+  
+     let showClass = 'show-' + randNum;
+     if (this.currentClass) {
+       cube.classList.remove( this.currentClass );
+     }
+     cube.classList.add( showClass );
+     this.currentClass = showClass;
+   
    if (Object.keys(this.returnTheActivePlayer().playerHistorySteps).length === 0){
     this.returnTheActivePlayer().playerHistorySteps.push(1);
    }
-   
+
     let rolleTheRandomDize = boardMechanics.randoNumber(1, 6);
-    let showTheValueDize = document.getElementById("theDize");
-    showTheValueDize.innerHTML = rolleTheRandomDize;
     let lastNumberInHistory = this.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 1];
-    let summarizeWithLastNumber = lastNumberInHistory + rolleTheRandomDize;
+    let summarizeWithLastNumber = lastNumberInHistory + randNum;
     this.returnTheActivePlayer().playerHistorySteps.push(summarizeWithLastNumber);
-    this.returnTheActivePlayer().playerSteps += rolleTheRandomDize;
+    
+    function limitNumberWithinRange(num, min, max){
+      const MIN = min || 1;
+      const MAX = max || 100;
+      const parsed = parseInt(num)
+      return Math.min(Math.max(parsed, MIN), MAX)
+    }
+    console.log(this.returnTheActivePlayer().nameOfPlayer);
     console.log(this.returnTheActivePlayer().playerSteps);
-    console.log(this.returnTheActivePlayer().nameOfPlayer + ' ' + this.returnTheActivePlayer().playerHistorySteps);
-    console.log(lastNumberInHistory);
-    boardMechanics.playerSteps += rolleTheRandomDize;
-
-    const theTile = document.getElementById('squareNumber' + this.returnTheActivePlayer().playerSteps);
-    console.log(this.returnTheActivePlayer(),theTile);
-    theTile.style.backgroundColor = "#FF6B1A";
-      if (this.playerSteps > 1) {
-        this.cleanTheLastTile(2);
-      }
-    this.playerMechanics();
-  },
+    let plussTheNumbas = this.returnTheActivePlayer().playerSteps + randNum;
+    let maxCap100 = limitNumberWithinRange(plussTheNumbas);
+    console.log(maxCap100);
+    
+     this.returnTheActivePlayer().playerSteps = maxCap100;
+     console.log(this.returnTheActivePlayer().nameOfPlayer + ' ' + this.returnTheActivePlayer().playerSteps);
+    setTimeout(function(){
+      boardMechanics.playerMechanics();
+     //boardMechanics.cleanTheLastTile(summarizeWithLastNumber);
+      
+  }, 1000);
   
-  checkIfWon: function () {
-    if (this.playerSteps <= 100) {
-
-    } 
   },
   checkLadder: function(){
       let theActiveNumber = this.returnTheActivePlayer().playerSteps;
-      console.log(boardMechanics.theGreenTilesBottom, theActiveNumber);
      
     if ((boardMechanics.theGreenTilesBottom.includes(theActiveNumber))) {
-      console.log("Hit a green ladder");
+      //console.log("Hit a green ladder");
       let theLadderObject = boardMechanics.allLadders[this.returnTheActivePlayer().playerSteps].topVerdi;
       let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
       document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.top = theTileToJumpTo.top +"px";
       document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.left= theTileToJumpTo.left +"px";
-      console.log(theLadderObject);
+      //console.log(theLadderObject);
+      this.cleanTiles.push(theLadderObject);
+      //console.log("blow!");
+      //document.getElementById('squareNumber' + theLadderObject).style.backgroundColor = boardMechanics.orangeTile;
       this.returnTheActivePlayer().playerHistorySteps.push(theLadderObject);
       this.returnTheActivePlayer().playerSteps += theLadderObject;
+      //console.log(this.returnTheActivePlayer().playerSteps);
       let lastNumberInHistory = this.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 2];
-      console.log(lastNumberInHistory);
+      //console.log(lastNumberInHistory);
+      document.getElementById('squareNumber' + lastNumberInHistory).style.backgroundColor = boardMechanics.greenTile;
+
       let addTheUpSteps = theLadderObject - this.returnTheActivePlayer().playerSteps;
       this.returnTheActivePlayer().playerSteps += addTheUpSteps;
     } else if ((boardMechanics.theRedTilesTop.includes(theActiveNumber))) {
@@ -221,11 +278,13 @@ returnTheActivePlayerSteps: function(){
       this.returnTheActivePlayer().playerSteps += theLadderObject;
       let lastNumberInHistory = this.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 2];
       console.log(lastNumberInHistory);
+      document.getElementById('squareNumber' + lastNumberInHistory).style.backgroundColor = boardMechanics.redTile;
+
       let addTheUpSteps = theLadderObject - this.returnTheActivePlayer().playerSteps;
       this.returnTheActivePlayer().playerSteps += addTheUpSteps;
     }
   },
-  playerMechanics: function () {
+  playerMechanics: function () {  
     let theRepeater; //we will use this variable to clear the setInterval()
 
     function stopAnimate() {
@@ -238,7 +297,6 @@ returnTheActivePlayerSteps: function(){
       
       let catchTheTileWeBEENAt = 'squareNumber' + boardMechanics.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 2];
       let theActiveTileOfThePlayer = document.getElementById(catchTheTileWeBEENAt).getBoundingClientRect();
-      console.log('catchTheTileWeBEENAt: ' + catchTheTileWeBEENAt + 'playerssteps: '+ boardMechanics.returnTheActivePlayer().playerSteps);
       
       const interval = 0; //100 ms of interval for the setInterval()
 
@@ -282,17 +340,29 @@ returnTheActivePlayerSteps: function(){
           document.getElementById("theButton").disabled = false;
           stopAnimate();
           boardMechanics.checkLadder();
+          boardMechanics.checkIfSomeOneWon();
           boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());
-          boardMechanics.checkIfWon();
         } else {
           document.getElementById("theButton").disabled = false;
           stopAnimate();
           console.log(" stop turd");
-          boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());
-          boardMechanics.checkIfWon();
+          boardMechanics.checkIfSomeOneWon();
+          boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());   
         }
       }, interval); //end of setInterval
     } //end of animateScript()
+  },
+  checkIfSomeOneWon: function(){
+    console.log(this.returnTheActivePlayer().nameOfPlayer + ' ' + this.returnTheActivePlayer().playerSteps);
+    let hasSomeBodyWon = boardMechanics.returnTheActivePlayer().playerSteps > 99;
+    console.log(hasSomeBodyWon);
+    if(hasSomeBodyWon){
+      document.getElementById("theButton").disabled = true;
+        let gameCompleteInfo = document.querySelector('#gameComplete h2');
+        let celebrateIcon = '\uD83D\uDE4C';
+        let partyIcon  = '\uD83E\uDD73';
+        gameCompleteInfo.innerHTML = 'The winner is....' + boardMechanics.returnTheActivePlayer().nameOfPlayer + partyIcon + celebrateIcon;
+    }
   }
 };
 
@@ -302,8 +372,10 @@ const createThePlayer = function (nameOfPlayer) {
   this.nameOfPlayer = nameOfPlayer;
   this.playerSteps = 1;
   this.playerHistorySteps = [];
+  this.cleanTheLastTile = [];
   this.addPlayer = function () {
     let playerDiv = document.createElement('div');
+    boardMechanics.allPlayers.push(nameOfPlayer);
     playerDiv.id = this.nameOfPlayer;
     playerDiv.className = "theHeroImage";
     //playerDiv.style.backgroundImage = "url('player1.png')";
@@ -329,4 +401,11 @@ const button = document.querySelector('button');
 
 button.addEventListener('click', event => {
   boardMechanics.rollTheDize();
+});
+
+
+document.addEventListener("keyup", function(event) {
+  if (event.key === 'Enter') {
+    boardMechanics.rollTheDize();
+  }
 });
