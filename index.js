@@ -5,6 +5,7 @@ const boardMechanics = {
   greenTile: '#43F785',
   orangeTile: 'rgb(255 105 0)',
   redTile:'#FA0801',
+  emojiCharacters:['\uD83D\uDC7B','\uD83D\uDC7D','\uD83D\uDCA9','\uD83E\uDD21','\uD83D\uDC12'],
   playerSteps: 1,
   cleanTiles: [],
   allPlayers: [],
@@ -142,8 +143,12 @@ const boardMechanics = {
     } else {
         this.countNextPlayer++;
     }
+    let nameOfPlayerToRollDize = document.querySelector('#theScore h3');
+    let nameOfFirstPlayer = this.returnTheActivePlayer().nameOfPlayer;
+    nameOfPlayerToRollDize.innerHTML= 'Spiller sin tur: '+nameOfFirstPlayer;
+    let nameOfPlayerEmoji = document.querySelector('#theScore span');
+    nameOfPlayerEmoji.innerHTML = boardMechanics.emojiCharacters[this.countNextPlayer];
     return this.countNextPlayer;
-  
   },
   playerCounter: function (playerNR) {
     //console.log(myPlayass[playerNR]);
@@ -214,7 +219,7 @@ theValueOfTheDize:1,
      }
      cube.classList.add( showClass );
      this.currentClass = showClass;
-   
+   console.log(this.returnTheActivePlayer());
    if (Object.keys(this.returnTheActivePlayer().playerHistorySteps).length === 0){
     this.returnTheActivePlayer().playerHistorySteps.push(1);
    }
@@ -326,7 +331,7 @@ theValueOfTheDize:1,
         //console.log("catchTheTileGOINGTo: " + catchTheTileGOINGTo);
 
         let speedHorizontal = 2;
-        let speedDiagonal = 1;
+        let speedDiagonal = .5;
 
         if ((moveDudeLeft > theActiveTile.left) && !(moveDudeRight < theActiveTile.right)) {
           moveDudeLeft -= speedHorizontal;
@@ -361,7 +366,7 @@ theValueOfTheDize:1,
         let gameCompleteInfo = document.querySelector('#gameComplete h2');
         let celebrateIcon = '\uD83D\uDE4C';
         let partyIcon  = '\uD83E\uDD73';
-        gameCompleteInfo.innerHTML = 'The winner is....' + boardMechanics.returnTheActivePlayer().nameOfPlayer + partyIcon + celebrateIcon;
+        gameCompleteInfo.innerHTML = 'Og vinneren er....' + boardMechanics.returnTheActivePlayer().nameOfPlayer + boardMechanics.emojiCharacters[boardMechanics.countNextPlayer] + partyIcon + celebrateIcon;
     }
   }
 };
@@ -378,6 +383,11 @@ const createThePlayer = function (nameOfPlayer) {
     boardMechanics.allPlayers.push(nameOfPlayer);
     playerDiv.id = this.nameOfPlayer;
     playerDiv.className = "theHeroImage";
+    console.log(boardMechanics.allPlayers.length);  
+    for (let i = 0; i < boardMechanics.allPlayers.length; i++) {
+      console.log(i);
+      playerDiv.innerHTML = boardMechanics.emojiCharacters[i];
+    }
     //playerDiv.style.backgroundImage = "url('player1.png')";
     let theActiveTile = document.getElementById('squareNumber1');
     theActiveTile.append(playerDiv);
@@ -385,23 +395,39 @@ const createThePlayer = function (nameOfPlayer) {
   };
 };
 
+function startTheGame(amount){
+  button.disabled = false;
+  let playersAmount= amount;
+
+  for (let i = 1; i < amount+1; i++) {
+    let playerNumber = 'Spiller '+i;
+    console.log(i);
+    const addNewPlaya  = new createThePlayer(playerNumber);
+    myPlayass.push(addNewPlaya);
+    addNewPlaya.addPlayer();
+  }
+  document.querySelector("#gameInfo").style.display = "none";
+  let nameOfPlayerToRollDize = document.querySelector('#theScore h3');
+  let nameOfFirstPlayer = myPlayass[0].nameOfPlayer;
+  nameOfPlayerToRollDize.innerHTML= 'Spiller sin tur: '+nameOfFirstPlayer;
+  let nameOfPlayerEmoji = document.querySelector('#theScore span');
+    nameOfPlayerEmoji.innerHTML = boardMechanics.emojiCharacters[boardMechanics.countNextPlayer];
+
+  button.addEventListener('click', event => {
+    boardMechanics.rollTheDize();
+  });
+}
 
 //Create the new players
-const emory = new createThePlayer('emory');
-const finley = new createThePlayer('finley');
-emory.addPlayer();
-finley.addPlayer();
 
-const myPlayass = [emory, finley];
-//console.log(emory.playerSteps);
-boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());
+const myPlayass = [];
+//console.log(myPlayass[0].nameOfPlayer);
+//boardMechanics.playerCounter(boardMechanics.stepThroughEachPlayer());
 
-const button = document.querySelector('button');
+const button = document.querySelector('.scene button');
 
+button.disabled = true;
 
-button.addEventListener('click', event => {
-  boardMechanics.rollTheDize();
-});
 
 
 document.addEventListener("keyup", function(event) {
