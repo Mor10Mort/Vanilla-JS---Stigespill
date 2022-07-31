@@ -9,17 +9,20 @@
   </head>
   <body>
     <div id="gameInfo">
-      <p>Hvor mange skal spille?</p>
+      <p>Velg antall spillere</p>
       <button type="button" onclick="startTheGame(1)">1</button>
       <button type="button" onclick="startTheGame(2)">2</button>
       <button type="button" onclick="startTheGame(3)">3</button>
       <button type="button" onclick="startTheGame(4)">4</button>
     </div>
     <div id="gameComplete"><h2 id="nameWinner" data-text="1F389"></h2></div>
+    <div id="theBoard">   
+    </div>
     <div id="theScore">
     <h3></h3>
     <span></span>
     <div class = "scene">
+      <button id="theButton" style="text-align:center;">Kast kerning (ENTER)</button>
       <div class="cube">
         <div class="cube__face cube__face--1">1</div>
         <div class="cube__face cube__face--2">2</div>
@@ -28,11 +31,9 @@
         <div class="cube__face cube__face--5">5</div>
         <div class="cube__face cube__face--6">6</div>
       </div>
-      <button id="theButton" style="text-align:center;">Kast kerning</button>
     </div>
     </div>
-    <div id="theBoard">   
-    </div>
+    
 	<script src="index.js"></script>
   </body>
 </html>
