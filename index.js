@@ -4,8 +4,8 @@ const boardMechanics = {
   tiles: 100,
   greenTile: '#43F785',
   orangeTile: 'rgb(255 105 0)',
-  redTile:'#FA0801',
-  emojiCharacters:['\uD83D\uDC7B','\uD83D\uDC7D','\uD83D\uDCA9','\uD83E\uDD21','\uD83D\uDC12'],
+  redTile: '#FA0801',
+  emojiCharacters: ['\uD83D\uDC7B', '\uD83D\uDC7D', '\uD83D\uDCA9', '\uD83E\uDD21', '\uD83D\uDC12'],
   playerSteps: 1,
   cleanTiles: [],
   allPlayers: [],
@@ -18,10 +18,11 @@ const boardMechanics = {
   theTile: document.getElementById('squareNumber' + this.playerSteps),
   colors: ["#FADED5", "#DEBFBD", "#F5DDE2", "#DEBDD4", "#F6D5FA"],
   randomColor: function () {
-    //decorates the tiles
+    //dekorerer tiles med farger
     return Math.floor(Math.random() * this.colors.length)
   },
   randoNumber: function (min, max) {
+    //return 6;
     return min + Math.floor(Math.random() * (max - min + 1));
   },
   createTheBoard: function () {
@@ -34,7 +35,7 @@ const boardMechanics = {
       this.theBoardDiv.append(frameDiv);
     }
 
-    ////This makes the ladders "connect" to the tiles. Borrowed and adjusted from https://thewebdev.info/2021/09/12/how-to-draw-a-line-between-two-divs-with-javascript/
+    ////Lager og connecter stigene, lånte og justere fra https://thewebdev.info/2021/09/12/how-to-draw-a-line-between-two-divs-with-javascript/
     const getOffset = (el) => {
       const rect = el.getBoundingClientRect();
       return {
@@ -69,21 +70,20 @@ const boardMechanics = {
     }
 
     function makeTilesGreenOrRed(element1, element2, theColor) {
-      //dynamically creates the ladders.
       let getTheDigitsElement1 = parseInt(element1.slice(-2));
       let getTheDigitsElement2 = parseInt(element2.slice(-2));
-      //lage key/value pair for stigene
-      if (theColor == "green"){
+      
+      if (theColor == "green") {
         if (boardMechanics.allLadders[getTheDigitsElement2] === undefined) {
           boardMechanics.allLadders[getTheDigitsElement2] = [];
-      } 
-        
-        Object.assign(boardMechanics.allLadders[getTheDigitsElement2], {topVerdi: getTheDigitsElement1, bottomVerdi: getTheDigitsElement2});
-      } else if (theColor == "red"){
+        }
+
+        Object.assign(boardMechanics.allLadders[getTheDigitsElement2], { topVerdi: getTheDigitsElement1, bottomVerdi: getTheDigitsElement2 });
+      } else if (theColor == "red") {
         if (boardMechanics.allLadders[getTheDigitsElement1] === undefined) {
           boardMechanics.allLadders[getTheDigitsElement1] = [];
         }
-        Object.assign(boardMechanics.allLadders[getTheDigitsElement1], {topVerdi: getTheDigitsElement1, bottomVerdi: getTheDigitsElement2});
+        Object.assign(boardMechanics.allLadders[getTheDigitsElement1], { topVerdi: getTheDigitsElement1, bottomVerdi: getTheDigitsElement2 });
       }
       let d1 = document.getElementById(element1);
       let d2 = document.getElementById(element2);
@@ -95,7 +95,7 @@ const boardMechanics = {
         boardMechanics.theGreenTilesBottom.push(parseInt(element2.slice(-2)));
         boardMechanics.theGreenTilesTop.push(parseInt(element1.slice(-2)));
         document.getElementById(element2).style.backgroundColor = boardMechanics.greenTile;
-        
+
       } else if (theColor == 'red') {
         connect(d1, d2, 'down', 5);
         d1.style.backgroundColor = boardMechanics.redTile;
@@ -104,11 +104,11 @@ const boardMechanics = {
         document.getElementById(element1).style.backgroundColor = boardMechanics.redTile;
       }
     }
-    //adds new ladders here. Bug: not possible to add ladder from 1-9 due to "numbering" issue.
+    //legger til nye stiger her. Bug; ikke mulig å legge til stiger fra 0-9 pga "numbering issues"
     makeTilesGreenOrRed('squareNumber59', 'squareNumber39', 'green');
     makeTilesGreenOrRed('squareNumber91', 'squareNumber31', 'green');
     makeTilesGreenOrRed('squareNumber62', 'squareNumber35', 'green');
-    makeTilesGreenOrRed('squareNumber96', 'squareNumber13', 'green');
+    makeTilesGreenOrRed('squareNumber55', 'squareNumber13', 'green');
     makeTilesGreenOrRed('squareNumber78', 'squareNumber17', 'green');
     makeTilesGreenOrRed('squareNumber97', 'squareNumber66', 'green');
     makeTilesGreenOrRed('squareNumber57', 'squareNumber26', 'red');
@@ -120,56 +120,56 @@ const boardMechanics = {
   countNextPlayer: 0,
   stepThroughEachPlayer: function () {
     if (this.firstPlayerUp == false) {
-        this.firstPlayerUp = true;
-        return this.countNextPlayer = 0;
+      this.firstPlayerUp = true;
+      return this.countNextPlayer = 0;
     }
 
     let thePlayerCounter = boardMechanics.countNextPlayer == myPlayass.length - 1;
     if (thePlayerCounter) {
-        this.countNextPlayer = 0;
+      this.countNextPlayer = 0;
     } else {
-        this.countNextPlayer++;
+      this.countNextPlayer++;
     }
     let nameOfPlayerToRollDize = document.querySelector('#theScore h3');
     let nameOfFirstPlayer = this.returnTheActivePlayer().nameOfPlayer;
-    nameOfPlayerToRollDize.innerHTML= 'Kast terning: '+nameOfFirstPlayer;
+    nameOfPlayerToRollDize.innerHTML = 'Kast terning: ' + nameOfFirstPlayer;
     let nameOfPlayerEmoji = document.querySelector('#theScore span');
     nameOfPlayerEmoji.innerHTML = boardMechanics.emojiCharacters[this.countNextPlayer];
     return this.countNextPlayer;
   },
-returnTheActivePlayer: function(){
-  return myPlayass[this.countNextPlayer];
-},
-returnTheActivePlayerSteps: function(){
-  return myPlayass[this.countNextPlayer].playerSteps;
-},
-currentClass:'',
-theValueOfTheDize:1,
+  returnTheActivePlayer: function () {
+    return myPlayass[this.countNextPlayer];
+  },
+  returnTheActivePlayerSteps: function () {
+    return myPlayass[this.countNextPlayer].playerSteps;
+  },
+  currentClass: '',
+  theValueOfTheDize: 1,
   rollTheDize: function (event) {
-    //rolls the dize, adds dizevalue to the player, triggers "playerMechanics"
+    //ruller terningen, legger verdi til spiller. Tigger så "playerMechanics"
     document.getElementById("theButton").disabled = true;
 
     let cube = document.querySelector('.cube');
     let rollBtn = document.querySelector('.rollBtn');
-     let randNum = boardMechanics.randoNumber(1, 6);
-  
-     let showClass = 'show-' + randNum;
-     if (this.currentClass) {
-       cube.classList.remove( this.currentClass );
-     }
-     cube.classList.add( showClass );
-     this.currentClass = showClass;
-   console.log(this.returnTheActivePlayer());
-   if (Object.keys(this.returnTheActivePlayer().playerHistorySteps).length === 0){
-    this.returnTheActivePlayer().playerHistorySteps.push(1);
-   }
+    let randNum = boardMechanics.randoNumber(1, 6);
+
+    let showClass = 'show-' + randNum;
+    if (this.currentClass) {
+      cube.classList.remove(this.currentClass);
+    }
+    cube.classList.add(showClass);
+    this.currentClass = showClass;
+    console.log(this.returnTheActivePlayer());
+    if (Object.keys(this.returnTheActivePlayer().playerHistorySteps).length === 0) {
+      this.returnTheActivePlayer().playerHistorySteps.push(1);
+    }
 
     let rolleTheRandomDize = boardMechanics.randoNumber(1, 6);
     let lastNumberInHistory = this.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 1];
     let summarizeWithLastNumber = lastNumberInHistory + randNum;
     this.returnTheActivePlayer().playerHistorySteps.push(summarizeWithLastNumber);
-    
-    function limitNumberWithinRange(num, min, max){
+
+    function limitNumberWithinRange(num, min, max) {
       const MIN = min || 1;
       const MAX = max || 100;
       const parsed = parseInt(num)
@@ -180,22 +180,22 @@ theValueOfTheDize:1,
     let plussTheNumbas = this.returnTheActivePlayer().playerSteps + randNum;
     let maxCap100 = limitNumberWithinRange(plussTheNumbas);
     console.log("player to move steps: " + maxCap100);
-    
-     this.returnTheActivePlayer().playerSteps = maxCap100;
-    setTimeout(function(){
-      boardMechanics.playerMechanics();     
-  }, 1000);
-  
+
+    this.returnTheActivePlayer().playerSteps = maxCap100;
+    setTimeout(function () {
+      boardMechanics.playerMechanics();
+    }, 1000);
+
   },
-  checkLadder: function(){
-    //checks if player hit a green og red ladder. Improvements is removing repetitive code. 
-      let theActiveNumber = this.returnTheActivePlayer().playerSteps;
-     
+  checkLadder: function () {
+    //Sjekker om spiller treffer på rød eller grønn stige. Forbedring ville vært fjernet reppetive kode. 
+    let theActiveNumber = this.returnTheActivePlayer().playerSteps;
+
     if ((boardMechanics.theGreenTilesBottom.includes(theActiveNumber))) {
       let theLadderObject = boardMechanics.allLadders[this.returnTheActivePlayer().playerSteps].topVerdi;
-      let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
-      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.top = theTileToJumpTo.top +"px";
-      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.left= theTileToJumpTo.left +"px";
+      let theTileToJumpTo = document.getElementById('squareNumber' + theLadderObject).getBoundingClientRect();
+      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.top = theTileToJumpTo.top + "px";
+      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.left = theTileToJumpTo.left + "px";
       this.cleanTiles.push(theLadderObject);
       this.returnTheActivePlayer().playerHistorySteps.push(theLadderObject);
       this.returnTheActivePlayer().playerSteps += theLadderObject;
@@ -207,9 +207,9 @@ theValueOfTheDize:1,
     } else if ((boardMechanics.theRedTilesTop.includes(theActiveNumber))) {
       console.log("Hit a red ladder");
       let theLadderObject = boardMechanics.allLadders[this.returnTheActivePlayer().playerSteps].bottomVerdi;
-      let theTileToJumpTo = document.getElementById('squareNumber'+theLadderObject).getBoundingClientRect();
-      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.top = theTileToJumpTo.top +"px";
-      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.left= theTileToJumpTo.left +"px";
+      let theTileToJumpTo = document.getElementById('squareNumber' + theLadderObject).getBoundingClientRect();
+      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.top = theTileToJumpTo.top + "px";
+      document.getElementById(this.returnTheActivePlayer().nameOfPlayer).style.left = theTileToJumpTo.left + "px";
       console.log(theLadderObject);
       this.returnTheActivePlayer().playerHistorySteps.push(theLadderObject);
       this.returnTheActivePlayer().playerSteps += theLadderObject;
@@ -221,8 +221,8 @@ theValueOfTheDize:1,
       this.returnTheActivePlayer().playerSteps += addTheUpSteps;
     }
   },
-  playerMechanics: function () {  
-    //this function makes the player move on the board. Has room for improvement given that there is bugs where player "falls off" the board if window is rezied upon moving.
+  playerMechanics: function () {
+    //Meaknikken som beveger spilleren på brettet.
     let theRepeater; //we will use this variable to clear the setInterval()
     function stopAnimate() {
       clearInterval(theRepeater);
@@ -231,10 +231,10 @@ theValueOfTheDize:1,
     animateScript();
 
     function animateScript() {
-      
+
       let catchTheTileWeBEENAt = 'squareNumber' + boardMechanics.returnTheActivePlayer().playerHistorySteps[boardMechanics.returnTheActivePlayer().playerHistorySteps.length - 2];
       let theActiveTileOfThePlayer = document.getElementById(catchTheTileWeBEENAt).getBoundingClientRect();
-      
+
       const interval = 0;
 
       let moveDudeLeft = theActiveTileOfThePlayer.left;
@@ -257,14 +257,17 @@ theValueOfTheDize:1,
         let catchTheTileGOINGTo = 'squareNumber' + boardMechanics.returnTheActivePlayer().playerSteps;
         let theActiveTile = document.getElementById(catchTheTileGOINGTo).getBoundingClientRect();
         let speedHorizontal = 2;
-        let speedDiagonal = .5;
+        let speedDiagonal = 1;
 
-        if ((moveDudeLeft > theActiveTile.left) && !(moveDudeRight < theActiveTile.right)) {
+        if ((moveDudeLeft >= theActiveTile.left) && !(moveDudeRight <= theActiveTile.right)) {
           moveDudeLeft -= speedHorizontal;
-        } else if (moveDudeTop > theActiveTile.top) {
+          //console.log("left");
+        } else if (moveDudeTop >= theActiveTile.top) {
+          //console.log("up");
           moveDudeLeft += speedHorizontal;
           moveDudeTop -= speedDiagonal;
-        } else if ((moveDudeLeft < theActiveTile.left) && !(moveDudeRight > theActiveTile.right)) {
+        } else if ((moveDudeLeft <= theActiveTile.left) && !(moveDudeRight >= theActiveTile.right)) {
+          //console.log("right");
           moveDudeLeft += speedHorizontal;
         }
         else if ((moveDudeLeft = theActiveTile.left)) {
@@ -277,19 +280,19 @@ theValueOfTheDize:1,
           document.getElementById("theButton").disabled = false;
           stopAnimate();
           boardMechanics.checkIfSomeOneWon();
-         boardMechanics.stepThroughEachPlayer();   
+          boardMechanics.stepThroughEachPlayer();
         }
       }, interval); //end of setInterval
     } //end of animateScript()
   },
-  checkIfSomeOneWon: function(){
+  checkIfSomeOneWon: function () {
     let hasSomeBodyWon = boardMechanics.returnTheActivePlayer().playerSteps > 99;
-    if(hasSomeBodyWon){
+    if (hasSomeBodyWon) {
       document.getElementById("theButton").disabled = true;
-        let gameCompleteInfo = document.querySelector('#gameComplete h2');
-        let celebrateIcon = '\uD83D\uDE4C';
-        let partyIcon  = '\uD83E\uDD73';
-        gameCompleteInfo.innerHTML = 'Og vinneren er....' + boardMechanics.returnTheActivePlayer().nameOfPlayer + boardMechanics.emojiCharacters[boardMechanics.countNextPlayer] + partyIcon + celebrateIcon;
+      let gameCompleteInfo = document.querySelector('#gameComplete h2');
+      let celebrateIcon = '\uD83D\uDE4C';
+      let partyIcon = '\uD83E\uDD73';
+      gameCompleteInfo.innerHTML = 'Og vinneren er....' + boardMechanics.returnTheActivePlayer().nameOfPlayer + boardMechanics.emojiCharacters[boardMechanics.countNextPlayer] + partyIcon + celebrateIcon;
     }
   }
 };
@@ -313,41 +316,40 @@ const createThePlayer = function (nameOfPlayer) {
   };
 };
 
-//collects the amount of players selected from HTML and "sets up" the player
-function startTheGame(amount){
+//Setter opp spilleren her
+function startTheGame(amount) {
   button.disabled = false;
-  let playersAmount= amount;
+  let playersAmount = amount;
 
-  for (let i = 1; i < amount+1; i++) {
-    let playerNumber = 'Spiller '+i;
-    const addNewPlaya  = new createThePlayer(playerNumber);
+  for (let i = 1; i < amount + 1; i++) {
+    let playerNumber = 'Spiller ' + i;
+    const addNewPlaya = new createThePlayer(playerNumber);
     myPlayass.push(addNewPlaya);
     addNewPlaya.addPlayer();
   }
 
-  //hides the innitial player selector. Displays whos turn it is.
+  //Info om spillets gang...hvem sin tur det er, etc
   document.querySelector("#gameInfo").style.display = "none";
   let nameOfPlayerToRollDize = document.querySelector('#theScore h3');
   let nameOfFirstPlayer = myPlayass[0].nameOfPlayer;
-  nameOfPlayerToRollDize.innerHTML= 'Kast terning: '+nameOfFirstPlayer;
+  nameOfPlayerToRollDize.innerHTML = 'Kast terning: ' + nameOfFirstPlayer;
   let nameOfPlayerEmoji = document.querySelector('#theScore span');
-    nameOfPlayerEmoji.innerHTML = boardMechanics.emojiCharacters[boardMechanics.countNextPlayer];
+  nameOfPlayerEmoji.innerHTML = boardMechanics.emojiCharacters[boardMechanics.countNextPlayer];
 
   button.addEventListener('click', event => {
     boardMechanics.rollTheDize();
   });
-  //make ENTER possible to use
-  document.addEventListener("keyup", function(event) {
+  //Gjør mulig bruke ENTER
+  document.addEventListener("keyup", function (event) {
     if (event.key === 'Enter') {
       boardMechanics.rollTheDize();
     }
   });
 }
 
-//Where I place all players
+//Inni her ligger spillerne
 const myPlayass = [];
 
-//Borrowed the dize from here https://icodemag.com/3d-rolling-dice-css-javascript/ Also, make sure possible to use ENTER to roll dize
+//Lånte og justerer terningen fra https://icodemag.com/3d-rolling-dice-css-javascript/
 const button = document.querySelector('.scene button');
 button.disabled = true;
-
